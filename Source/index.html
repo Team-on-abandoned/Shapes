@@ -24,6 +24,8 @@
 				points: [],
 				paralelogram: {},
 				circle: {},
+				mouseDownOnPoint: -1,
+				mousePointOffset: 0,
 				
 				init: function(){
 					this.canvas = document.getElementById("canvas");
@@ -31,26 +33,31 @@
 					this.width = this.canvas.width  = window.innerWidth - 20;
 					this.height = this.canvas.height = window.innerHeight - 50;			
 					this.ctx.font = 'bold 40px Comic Sans';
-					this.canvas.addEventListener('click', this.clickEventListener, false);
+					this.canvas.addEventListener('mousedown', this.mousedownEventListener, false);
+					this.canvas.addEventListener('mousemove', this.mousemoveEventListener, false);
+					this.canvas.addEventListener('mouseup', this.mouseupEventListener, false);
 
 					this.points = [];
 					this.paralelogram = {};
 					this.circle = {};
 				},
 
-				clickEventListener: function(event) {
+				mousedownEventListener: function(event){
 					var x = event.pageX,
-					y = event.pageY,
-					clickOnPoint = -1;
+					y = event.pageY;
 					
 					shapeController.points.forEach(function(point, i) {
 						if (Math.sqrt((x-point.posx)*(x-point.posx) + (y-point.posy)*(y-point.posy)) < point.radius * 2) {
-							clickOnPoint = i;
+							shapeController.mouseDownOnPoint = i;
 						}
 					});
 
-					if(clickOnPoint != -1){
-						alert('true');
+					if(shapeController.mouseDownOnPoint != -1){
+						mousePointOffset = {
+							x: shapeController.points[shapeController.mouseDownOnPoint].posx - x,
+							y: shapeController.points[shapeController.mouseDownOnPoint].posy - y,
+						};
+						shapeController.movePoint(event);
 					}
 					else if(shapeController.points.length < 3){
 						shapeController.addNewPoint(event);
@@ -62,6 +69,15 @@
 					}
 				},
 
+				mousemoveEventListener: function(event){
+					shapeController.movePoint(event);
+				},
+
+				mouseupEventListener: function(event){
+					shapeController.movePoint(event);
+					shapeController.mouseDownOnPoint = -1;
+				},
+
 				addNewPoint: function(event) {
 					this.points.push({
 						posx: event.pageX,
@@ -69,6 +85,18 @@
 						radius: 5,
 						color: 'red'
 					});
+				},
+
+				movePoint: function(event){
+					if(shapeController.mouseDownOnPoint != -1){
+						shapeController.points[shapeController.mouseDownOnPoint].posx = event.pageX + mousePointOffset.x;
+						shapeController.points[shapeController.mouseDownOnPoint].posy = event.pageY + mousePointOffset.y;
+
+						if(shapeController.points.length == 3)
+							shapeController.addFiguresInfo();
+
+						shapeController.render();
+					}
 				},
 
 				addFiguresInfo: function() {
