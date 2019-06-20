@@ -5,12 +5,80 @@
 		<title>Shapes</title>
 		
 		<style>
-			
+			html, body {
+				width:  100%;
+				height: 100%;
+				margin: 0;
+			}
 		</style>
 	</head>
 	<body>
+		<canvas id="canvas"></canvas>
+
 		<script>
-			
+			var shapeController = {
+				running: true,
+				width: 0,
+				height: 0,
+				points: [],
+				
+				init: function(){
+					this.canvas = document.getElementById("canvas");
+					this.ctx = canvas.getContext("2d");
+					this.canvas.width  = window.innerWidth - 20;
+					this.canvas.height = window.innerHeight - 20;
+					this.canvas.addEventListener('click', this.clickEventListener, false);
+				},
+
+				clickEventListener: function(event) {
+					var x = event.pageX,
+					y = event.pageY,
+					clickOnPoint = -1;
+					
+					shapeController.points.forEach(function(point, i) {
+						if (Math.sqrt((x-point.posx)*(x-point.posx) + (y-point.posy)*(y-point.posy)) < point.radius * 2) {
+							clickOnPoint = i;
+						}
+					});
+
+					if(clickOnPoint != -1){
+						alert('true');
+					}
+					else if(shapeController.points.length < 3){
+						shapeController.addNewPoint(event);
+						shapeController.render();
+					}
+				},
+
+				addNewPoint: function(event) {
+					this.points.push({
+						posx: event.pageX,
+						posy: event.pageY,
+						radius: 5,
+						color: 'red'
+					});
+				},
+
+				render: function() {
+					this.ctx.fillStyle = "darkgray";
+					this.ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+					shapeController.points.forEach(function(point) {
+						shapeController.ctx.strokeStyle = point.color;
+						shapeController.ctx.beginPath();
+						shapeController.ctx.arc(point.posx, point.posy, point.radius, 0, 2*Math.PI);
+						shapeController.ctx.stroke();
+					});
+				},
+				
+				start: function(){
+					this.init();
+					this.render();
+				}
+			};
+
+			window.addEventListener("load",	function(){ shapeController.start(); });
+
 		</script>
 	</body>
 </html>
