@@ -25,8 +25,9 @@
 				init: function(){
 					this.canvas = document.getElementById("canvas");
 					this.ctx = canvas.getContext("2d");
-					this.canvas.width  = window.innerWidth - 20;
-					this.canvas.height = window.innerHeight - 20;
+					this.width = this.canvas.width  = window.innerWidth - 20;
+					this.height = this.canvas.height = window.innerHeight - 20;			
+					this.ctx.font = 'bold 40px Comic Sans';
 					this.canvas.addEventListener('click', this.clickEventListener, false);
 				},
 
@@ -60,7 +61,7 @@
 				},
 
 				render: function() {
-					this.ctx.fillStyle = "darkgray";
+					this.ctx.fillStyle = "#363636";
 					this.ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 					shapeController.points.forEach(function(point) {
@@ -68,6 +69,10 @@
 						shapeController.ctx.beginPath();
 						shapeController.ctx.arc(point.posx, point.posy, point.radius, 0, 2*Math.PI);
 						shapeController.ctx.stroke();
+
+						var str = '(' + point.posx + ', ' + point.posy + ')';
+						shapeController.ctx.fillStyle = "white";
+						shapeController.ctx.fillText(str, point.posx - str.length / 2 * 18, point.posy - 20);
 					});
 				},
 				
