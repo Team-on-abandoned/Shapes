@@ -14,21 +14,28 @@
 	</head>
 	<body>
 		<canvas id="canvas"></canvas>
+		<input value="Reset" onclick="reset()" type="button">
+		<input value="About" onclick="about()" type="button">
 
 		<script>
 			var shapeController = {
-				running: true,
 				width: 0,
 				height: 0,
 				points: [],
+				paralelogram: {},
+				circle: {},
 				
 				init: function(){
 					this.canvas = document.getElementById("canvas");
 					this.ctx = canvas.getContext("2d");
 					this.width = this.canvas.width  = window.innerWidth - 20;
-					this.height = this.canvas.height = window.innerHeight - 20;			
+					this.height = this.canvas.height = window.innerHeight - 50;			
 					this.ctx.font = 'bold 40px Comic Sans';
 					this.canvas.addEventListener('click', this.clickEventListener, false);
+
+					this.points = [];
+					this.paralelogram = {};
+					this.circle = {};
 				},
 
 				clickEventListener: function(event) {
@@ -47,6 +54,10 @@
 					}
 					else if(shapeController.points.length < 3){
 						shapeController.addNewPoint(event);
+
+						if(shapeController.points.length == 3)
+							shapeController.addFiguresInfo();
+
 						shapeController.render();
 					}
 				},
@@ -58,6 +69,39 @@
 						radius: 5,
 						color: 'red'
 					});
+				},
+
+				addFiguresInfo: function() {
+					this.addParalelogramInfo();
+					this.addCircleInfo();
+				},
+
+				addParalelogramInfo: function() {
+					this.paralelogram = {
+						points: [],
+						color: "blue"
+					}
+
+					shapeController.points.forEach(function(point) {
+						shapeController.paralelogram.points.push({
+							posx: point.posx,
+							posy: point.posy
+						});
+					});
+					
+					shapeController.paralelogram.points.push({
+						posx: shapeController.points[0].posx + shapeController.points[2].posx - shapeController.points[1].posx,
+						posy:  shapeController.points[0].posy + shapeController.points[2].posy - shapeController.points[1].posy,
+					});
+
+					shapeController.paralelogram.points.push({
+						posx: shapeController.points[0].posx,
+						posy:  shapeController.points[0].posy
+					});
+				},
+
+				addCircleInfo: function() {
+
 				},
 
 				render: function() {
@@ -74,6 +118,17 @@
 						shapeController.ctx.fillStyle = "white";
 						shapeController.ctx.fillText(str, point.posx - str.length / 2 * 18, point.posy - 20);
 					});
+
+					if(shapeController.paralelogram.points != null && shapeController.paralelogram.points.length != 0){
+						shapeController.ctx.strokeStyle = shapeController.paralelogram.color;
+						shapeController.ctx.beginPath();
+						this.ctx.moveTo(shapeController.paralelogram.points[0].posx, shapeController.paralelogram.points[0].posy);
+						for(var i = 0; i < 5; ++i) {
+							var point = shapeController.paralelogram.points[i];
+							this.ctx.lineTo(point.posx, point.posy);
+						};
+						shapeController.ctx.stroke();
+					}
 				},
 				
 				start: function(){
@@ -83,6 +138,14 @@
 			};
 
 			window.addEventListener("load",	function(){ shapeController.start(); });
+
+			function reset() {
+				shapeController.start();
+			}
+
+			function about() {			
+				alert("about");
+			}
 
 		</script>
 	</body>
