@@ -160,6 +160,10 @@
 						shapeController.ctx.beginPath();
 						shapeController.ctx.arc(shapeController.circle.point.posx, shapeController.circle.point.posy, shapeController.circle.radius, 0, 2*Math.PI);
 						shapeController.ctx.stroke();
+
+						var str = 'S: ' + shapeController.circle.s;
+						shapeController.ctx.fillStyle = "white";
+						shapeController.ctx.fillText(str, shapeController.circle.point.posx - str.length / 2 * 18, shapeController.circle.point.posy);
 					}
 				},
 				
