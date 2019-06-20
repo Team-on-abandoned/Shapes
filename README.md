@@ -28,5 +28,5 @@
 
 #### Screenshots
 
-![](readme/1.jpg)
-![](readme/2.jpg)
+![](Readme/1.jpg)
+![](Readme/2.jpg)
