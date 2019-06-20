@@ -79,29 +79,54 @@
 				addParalelogramInfo: function() {
 					this.paralelogram = {
 						points: [],
-						color: "blue"
+						color: "blue",
+						s: 0
 					}
 
-					shapeController.points.forEach(function(point) {
+					this.points.forEach(function(point) {
 						shapeController.paralelogram.points.push({
 							posx: point.posx,
 							posy: point.posy
 						});
 					});
 					
-					shapeController.paralelogram.points.push({
+					this.paralelogram.points.push({
 						posx: shapeController.points[0].posx + shapeController.points[2].posx - shapeController.points[1].posx,
 						posy:  shapeController.points[0].posy + shapeController.points[2].posy - shapeController.points[1].posy,
 					});
 
-					shapeController.paralelogram.points.push({
+					this.paralelogram.points.push({
 						posx: shapeController.points[0].posx,
 						posy:  shapeController.points[0].posy
 					});
+
+					var a = this.paralelogram.points[0],
+						b = this.paralelogram.points[1],
+						c = this.paralelogram.points[2];
+
+					var ab = {
+						x: b.posx - a.posx, 
+						y: b.posy - a.posy 
+					},
+					cb = {
+						x: b.posx - c.posx, 
+						y: b.posy - c.posy 
+					};
+	
+					this.paralelogram.s = Math.abs(ab.x * cb.y - ab.y * cb.x);
 				},
 
 				addCircleInfo: function() {
-
+					var r = Math.sqrt(this.paralelogram.s / Math.PI);
+					this.circle = {
+						color: "yellow",
+						s: this.paralelogram.s,
+						radius: r,
+						point: {
+							posx: (this.points[2].posx + this.points[0].posx) / 2,
+							posy: (this.points[2].posy + this.points[0].posy) / 2,
+						}			
+					}
 				},
 
 				render: function() {
@@ -127,6 +152,13 @@
 							var point = shapeController.paralelogram.points[i];
 							this.ctx.lineTo(point.posx, point.posy);
 						};
+						shapeController.ctx.stroke();
+					}
+
+					if(shapeController.circle.point != null){
+						shapeController.ctx.strokeStyle = shapeController.circle.color;
+						shapeController.ctx.beginPath();
+						shapeController.ctx.arc(shapeController.circle.point.posx, shapeController.circle.point.posy, shapeController.circle.radius, 0, 2*Math.PI);
 						shapeController.ctx.stroke();
 					}
 				},
